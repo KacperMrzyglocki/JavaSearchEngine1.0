@@ -1,0 +1,4 @@
+**/dictionary/
+**/dictionary/*
+.vscode/
+*.code-workspace

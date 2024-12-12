@@ -4,19 +4,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
-
-import java.io.File;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -24,16 +20,11 @@ import org.json.JSONTokener;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class InvertedIndexFolders {
     private final Map<String, Map<Integer, Integer>> index = new ConcurrentHashMap<>();
+    private final int executors = 20;
 
     private static final Set<String> stopwords = new HashSet<>(Arrays.asList(
             "a", "an", "the", "and", "or", "not", "is", "of", "in", "on", "to", "by" // basic stopwords
@@ -46,56 +37,47 @@ public class InvertedIndexFolders {
         for (String word : words) {
             word = punctuationPattern.matcher(word).replaceAll("");
             if (!word.isEmpty() && !stopwords.contains(word)) {
-                lock.lock();
-                try {
-                    index.computeIfAbsent(word, k -> new ConcurrentHashMap<>()).merge(docId, 1, Integer::sum);
-                    //System.out.println("Added word: " + word + " for document ID: " + docId); // Debug output
-                } finally {
-                    lock.unlock();
+                index.computeIfAbsent(word, k -> new ConcurrentHashMap<>()).merge(docId, 1, Integer::sum);
+            }
+        }
+    }
+
+            public void buildIndex(String inputFile) {
+                ExecutorService executorService = Executors.newFixedThreadPool(executors);
+
+                try (FileReader reader = new FileReader(inputFile)) {
+                    JSONArray books = new JSONArray(new Scanner(reader).useDelimiter("\\Z").next());
+
+                    List<Future<?>> futures = new ArrayList<>();
+                    for (int i = 0; i < books.length(); i++) {
+                        JSONObject book = books.getJSONObject(i);
+                        int docId = book.getInt("id");
+
+                        // Get the appropriate text URL from the book directly
+                        futures.add(CompletableFuture.runAsync(() -> {
+                            String url = getTextUrl(book);
+                            String text = fetchTextFromUrl(url);
+                            if (text != null) {
+                                addDocument(docId, text); // Add the document
+                            } else {
+                                System.out.println("No text found for document ID: " + docId); // Debug output
+                            }
+                        }, executorService));
+                    }
+
+                    for (Future<?> future : futures) {
+                        future.get(); // Wait for all tasks to complete
+                    }
+
+                    executorService.shutdown();
+
+                    System.out.println("Index built successfully.");
+                } catch (IOException | InterruptedException | ExecutionException e) {
+                    System.out.println("Error reading file: " + e.getMessage());
                 }
             }
-        }
-    }
 
-
-    public void buildIndex(String inputFile) {
-        ExecutorService executorService = Executors.newFixedThreadPool(4);
-
-        try (FileReader reader = new FileReader(inputFile)) {
-            JSONArray books = new JSONArray(new Scanner(reader).useDelimiter("\\Z").next());
-
-            List<Runnable> tasks = new ArrayList<>();
-            for (int i = 0; i < books.length(); i++) {
-                JSONObject book = books.getJSONObject(i);
-                int docId = book.getInt("id");
-
-                // Get the appropriate text URL from the book directly
-                String url = getTextUrl(book);
-
-                tasks.add(() -> {
-                    String text = fetchTextFromUrl(url);
-                    if (text != null) {
-                        addDocument(docId, text); // Add the document
-                    } else {
-                        System.out.println("No text found for document ID: " + docId); // Debug output
-                    }
-                });
-            }
-
-            for (Runnable task : tasks) {
-                executorService.submit(task);
-            }
-
-            executorService.shutdown();
-            while (!executorService.isTerminated()) { }
-
-            System.out.println("Index built successfully.");
-        } catch (IOException e) {
-            System.out.println("Error reading file: " + e.getMessage());
-        }
-    }
-
-    private String getTextUrl(JSONObject book) {
+            private String getTextUrl(JSONObject book) {
         // Print the book JSON object for debugging
         //System.out.println("Book JSON: " + book.toString());
 
@@ -111,7 +93,7 @@ public class InvertedIndexFolders {
         return null; // Return null if no URL is found
     }
 
-    private String fetchTextFromUrl(String urlString) {
+        private String fetchTextFromUrl(String urlString) {
         try {
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -121,92 +103,90 @@ public class InvertedIndexFolders {
             int responseCode = conn.getResponseCode();
 
             if (responseCode == HttpURLConnection.HTTP_MOVED_TEMP || responseCode == HttpURLConnection.HTTP_MOVED_PERM) {
-                String newUrl = conn.getHeaderField("Location");
-                //System.out.println("Redirected to: " + newUrl);
-                return fetchTextFromUrl(newUrl);  // Recursively fetch from the new URL
+            String newUrl = conn.getHeaderField("Location");
+            //System.out.println("Redirected to: " + newUrl);
+            return fetchTextFromUrl(newUrl);  // Recursively fetch from the new URL
             } else if (responseCode != HttpURLConnection.HTTP_OK) {
-                System.out.println("Error fetching URL: " + urlString + ", Response code: " + responseCode);
-                return null;
+            System.out.println("Error fetching URL: " + urlString + ", Response code: " + responseCode);
+            return null;
             }
 
-            Scanner sc = new Scanner(url.openStream());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
             StringBuilder text = new StringBuilder();
-            while (sc.hasNext()) {
-                text.append(sc.nextLine()).append(" ");
+            String line;
+            while ((line = reader.readLine()) != null) {
+            text.append(line).append(" ");
             }
-            sc.close();
+            reader.close();
             return text.toString();
         } catch (IOException e) {
             System.out.println("Error fetching text from URL: " + e.getMessage());
             return null;
         }
     }
+            public void serialize() {
+            File directory = new File("app/dictionary");
 
-    public void serialize() {
-        File directory = new File("/app/dictionary");
+            if (directory.exists())
+                deleteDirectory(directory);
 
-        if (!directory.exists()) {
-            if (directory.mkdirs()) {
-                //System.out.println("Folder 'dictionary' został utworzony.");
-            } else {
-                System.out.println("Nie udało się utworzyć folderu 'dictionary'.");
+            if (!directory.mkdirs())
+                System.out.println("Failed to create 'dictionary' directory.");
+
+            ExecutorService executorService = Executors.newFixedThreadPool(executors); // Use fixed thread pool for better performance
+
+            List<Callable<Void>> tasks = new ArrayList<>();
+            for (Map.Entry<String, Map<Integer, Integer>> outerEntry : index.entrySet()) {
+                tasks.add(() -> {
+                    serializeEntry(outerEntry);
+                    return null;
+                });
             }
-        } else {
-            deleteDirectory(directory);
-            if (directory.mkdirs()) {
-                //System.out.println("Folder 'dictionary' został utworzony.");
-            } else {
-                System.out.println("Nie udało się utworzyć folderu 'dictionary'.");
+
+            try {
+                executorService.invokeAll(tasks); // Invoke all tasks concurrently
+            } catch (InterruptedException e) {
+                System.out.println("Serialization interrupted: " + e.getMessage());
+            } finally {
+                executorService.shutdown();
             }
 
+            System.out.println("Serialization completed successfully.");
         }
 
-        for (Map.Entry<String, Map<Integer, Integer>> outerEntry : index.entrySet()) {
+
+        private void serializeEntry(Map.Entry<String, Map<Integer, Integer>> outerEntry) {
             String word = outerEntry.getKey();
 
-            //System.out.println("Word: " + word);
-
             char firstLetter = word.charAt(0);
+            char secondLetter = word.length() > 1 ? word.charAt(1) : '_'; // Handle single character words
+            String fileName = "app/dictionary/"
+                    + firstLetter + "\\" + secondLetter + ".json";
 
-            //System.out.println("Pierwsza litera: " + firstLetter);
-
-            String fileName = "/app/dictionary/" + firstLetter + ".json";
             File file = new File(fileName);
 
-
-            if (!file.exists()) {
-                try {
-                    if (file.createNewFile()) {
-                        //System.out.println("Plik " + fileName + " został utworzony.");
-                    } else {
-                        System.out.println("Nie udało się utworzyć pliku " + fileName + ".");
-                    }
-                } catch (IOException e) {
-                    System.out.println("Wystąpił błąd podczas tworzenia pliku: " + e.getMessage());
+            try {
+                Files.createDirectories(file.getParentFile().toPath());
+                if (!file.exists()) {
+                    Files.createFile(file.toPath());
                 }
-            } else {
-                //System.out.println("Plik " + fileName + " już istnieje.");
+            } catch (IOException e) {
+                System.out.println("Error creating file: " + e.getMessage());
             }
 
             JSONObject mainJson = new JSONObject();
-
-
             JSONObject wordJson = new JSONObject(outerEntry.getValue());
-
             mainJson.put(word, wordJson);
 
-
-            try (FileWriter file2 = new FileWriter(fileName, true)) { // 'true' oznacza tryb dopisywania
-                file2.write(mainJson.toString(4));
-                file2.write(System.lineSeparator()); // Dodanie nowej linii po każdym wpisie, jeśli potrzebne
-                //System.out.println("Inverted index appended to " + fileName);
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
+                writer.write(mainJson.toString());
+                writer.newLine();
             } catch (IOException e) {
-                System.out.println("Error appending to index: " + e.getMessage());
+                System.out.println("Error writing to index: " + e.getMessage());
             }
         }
-    }
 
-    public void deserialize(String inputFile) {
+        public void deserialize(String inputFile) {
         try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
             StringBuilder currentJson = new StringBuilder();
             String line;
@@ -262,9 +242,9 @@ public class InvertedIndexFolders {
         if (dir.isDirectory()) {
             File[] files = dir.listFiles();
             if (files != null) {
-                for (File file : files) {
-                    deleteDirectory(file); // Usuń zawartość folderu rekurencyjnie
-                }
+            for (File file : files) {
+                deleteDirectory(file); // Recursively delete directory contents
+            }
             }
         }
         return dir.delete(); // Usuń pusty folder

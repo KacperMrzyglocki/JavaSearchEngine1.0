@@ -1,15 +1,20 @@
 package com.example;
 
+import com.hazelcast.core.IExecutorService;
 import org.json.JSONObject;
 
 import java.util.Map;
 import java.util.Scanner;
 
+import com.hazelcast.client.HazelcastClient;
+import com.hazelcast.client.config.ClientConfig;
+import com.hazelcast.core.HazelcastInstance;
+
 public class MainMenu {
-    private static final Scanner scanner = new Scanner(System.in);
     private static final InvertedIndexFolders index = new InvertedIndexFolders();
-
-
+    private static final Scanner scanner = new Scanner(System.in);
+    private static final HazelcastInstance hazelcastInstance = 
+    HazelcastConfig.getHazelcastInstance();
 
     public static void main(String[] args) {
         boolean exit = false;
@@ -17,12 +22,36 @@ public class MainMenu {
         while (!exit) {
             System.out.println("1. Search books");
             System.out.print("?> ");
-            int choice = scanner.nextInt();
-            scanner.nextLine();
+            int choice = -1;
+            // wait for the input to be attached
+            try {
+                choice = scanner.nextInt();
+                scanner.nextLine(); // consume the newline character
+            } catch (Exception e) {
+                System.out.println("No input detected.");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                }
+                continue;
+            }
 
             switch (choice) {
                 case 1:
-                    boolean searchCompleted = false;
+                    IExecutorService executorService = hazelcastInstance.getExecutorService("default");
+                    executorService.submit(new IndexTask());
+                    break;
+                default:
+                    exit=true;
+            }
+        }
+    }
+
+    static class IndexTask implements Runnable {
+        @Override
+        public void run() {
+           boolean searchCompleted = false;
                     while (!searchCompleted) {
                         System.out.print("Enter search term (or press Enter to cancel): ");
                         String term = scanner.nextLine().trim();
@@ -30,10 +59,11 @@ public class MainMenu {
                         if (term.isEmpty()) {
                             System.out.println("Search term cannot be empty. Please try again.");
                         } else {
-                            String fileName = "/app/dictionary/" + term.charAt(0) + ".json";
+                            char firstLetter = term.charAt(0);
+                            char secondLetter = term.length() > 1 ? term.charAt(1) : '_';
+                            String fileName = "/app/dictionary/" + firstLetter + "/" + secondLetter + ".json";
                             InvertedIndexFolders deserializedIndex = new InvertedIndexFolders();
                             deserializedIndex.deserialize(fileName);
-
 
                             Map<Integer, Integer> results = deserializedIndex.search(term);
                             if (results.isEmpty()) {
@@ -44,10 +74,6 @@ public class MainMenu {
                             searchCompleted = true;
                         }
                     }
-                    break;
-                default:
-                    System.out.println("Invalid option. Try again.");
-            }
         }
     }
 }

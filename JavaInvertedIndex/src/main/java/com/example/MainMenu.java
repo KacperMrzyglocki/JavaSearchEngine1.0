@@ -17,8 +17,15 @@ public class MainMenu {
 
             switch (choice) {
                 case 1:
+                    long startTime = System.currentTimeMillis();
                     index.buildIndex("/app/books.json");
+                    long endTime = System.currentTimeMillis();
+
+                    startTime = System.currentTimeMillis();
                     index.serialize("/app/inverted_index.json");
+                    endTime = System.currentTimeMillis();
+
+                    System.out.println("Time taken to build and serialize index: " + (endTime - startTime) + " ms");
                     System.out.println("Books updated and index built.");
                     break;
                 default:

@@ -1,0 +1,7 @@
+com\example\sortedIndex.class
+com\example\InvertedIndex.class
+com\example\InvertedIndexFolders.class
+com\example\Crawler.class
+com\example\MainMenu$IndexTask.class
+com\example\MainMenu.class
+com\example\HazelcastConfig.class
