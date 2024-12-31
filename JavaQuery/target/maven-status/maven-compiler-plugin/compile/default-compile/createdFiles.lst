@@ -1,4 +1,6 @@
-com\example\MainMenu$IndexTask.class
-com\example\InvertedIndexFolders.class
-com\example\MainMenu.class
-com\example\HazelcastConfig.class
+com/example/MainMenu.class
+com/example/QueryAPI.class
+com/example/HazelcastConfig.class
+com/example/QueryAPI$ErrorResponse.class
+com/example/MainMenu$IndexTask.class
+com/example/InvertedIndexFolders.class

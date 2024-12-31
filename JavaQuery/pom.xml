@@ -20,6 +20,20 @@
       <version>20230227</version>
     </dependency>
 
+    <!-- Spark Framework -->
+    <dependency>
+      <groupId>com.sparkjava</groupId>
+      <artifactId>spark-core</artifactId>
+      <version>2.9.4</version> <!-- Najnowsza wersja na dzień dzisiejszy -->
+    </dependency>
+
+    <!-- Google Gson (JSON Parser) -->
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.10.1</version> <!-- Najnowsza wersja na dzień dzisiejszy -->
+    </dependency>
+
     <!-- JMH dependencies for benchmarking -->
     <dependency>
       <groupId>org.openjdk.jmh</groupId>
