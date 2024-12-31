@@ -13,16 +13,10 @@ import static spark.Spark.*;
 
 public class DictionaryController {
 
-    private static final String DICTIONARY_FOLDER = "JavaQuery/dictionary1_json";
+    private static final String DICTIONARY_FOLDER = "JavaQuery/assets/dictionary.json";
 
     public void registerRoutes() {
         Gson gson = new Gson();
-
-        // Endpoint GET /hello
-        get("/hello", (req, res) -> {
-            res.type("application/json");
-            return "{\"message\": \"Hello, World!\"}";
-        });
 
         // Endpoint GET /search/dictionary/:word
         get("/search/dictionary/:word", (req, res) -> {

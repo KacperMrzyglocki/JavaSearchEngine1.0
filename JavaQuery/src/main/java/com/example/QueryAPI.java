@@ -1,5 +1,7 @@
 package com.example;
 
+import com.example.controller.FolderController;
+import com.example.controller.MetadataController;
 import com.example.controller.NormalController;
 import com.example.controller.DictionaryController;
 
@@ -22,6 +24,12 @@ public class QueryAPI {
 
         NormalController normalController = new NormalController();
         normalController.registerRoutes();
+
+        FolderController folderController = new FolderController();
+        folderController.registerRoutes();
+
+        MetadataController metadataController = new MetadataController();
+        metadataController.registerRoutes();
 
         System.out.println("Query Engine API is running on http://localhost:8080");
     }

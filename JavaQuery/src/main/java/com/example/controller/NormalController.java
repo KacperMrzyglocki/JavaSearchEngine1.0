@@ -12,7 +12,7 @@ import static spark.Spark.*;
 
 public class NormalController {
 
-    private static final String INDEX_FILE_PATH = "JavaQuery/inverted_index.json";
+    private static final String INDEX_FILE_PATH = "JavaQuery/assets/inverted_index.json";
 
     public void registerRoutes() {
         Gson gson = new Gson();
