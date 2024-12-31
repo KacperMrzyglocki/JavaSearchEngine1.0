@@ -1,6 +1,7 @@
 package com.example;
 
-import com.example.controller.QueryController;
+import com.example.controller.NormalController;
+import com.example.controller.DictionaryController;
 
 import static spark.Spark.*;
 
@@ -15,9 +16,12 @@ public class QueryAPI {
             res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
         });
 
-        // Rejestracja endpointów w kontrolerze
-        QueryController controller = new QueryController();
-        controller.registerRoutes();
+        // Rejestracja endpointów w kontrolerach
+        DictionaryController dictionaryController = new DictionaryController();
+        dictionaryController.registerRoutes();
+
+        NormalController normalController = new NormalController();
+        normalController.registerRoutes();
 
         System.out.println("Query Engine API is running on http://localhost:8080");
     }

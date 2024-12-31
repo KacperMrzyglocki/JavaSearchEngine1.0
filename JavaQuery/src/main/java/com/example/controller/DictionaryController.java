@@ -3,17 +3,15 @@ package com.example.controller;
 import com.google.gson.Gson;
 import org.json.JSONObject;
 
-import java.io.FileReader;
 import java.nio.file.Paths;
 import java.util.*;
 
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
 
 import static spark.Spark.*;
 
-public class QueryController {
+public class DictionaryController {
 
     private static final String DICTIONARY_FOLDER = "JavaQuery/dictionary1_json";
 
@@ -94,7 +92,7 @@ public class QueryController {
             System.err.println("Error reading or parsing file: " + filePath + " - " + e.getMessage());
         }
 
-        return result; // Return empty if word not found or error occurs
+        return result;
     }
 
 }
