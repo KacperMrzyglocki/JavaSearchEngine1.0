@@ -17,6 +17,10 @@ public class NormalController {
     public void registerRoutes() {
         Gson gson = new Gson();
 
+        get("/hello", (req, res) -> {
+            return "Hello world";
+        });
+
         // Endpoint GET /search/normal/:word
         get("/search/normal/:word", (req, res) -> {
             String word = req.params(":word");

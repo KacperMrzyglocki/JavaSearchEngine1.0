@@ -9,7 +9,7 @@ import static spark.Spark.*;
 
 public class QueryAPI {
     public static void main(String[] args) {
-        port(8080);
+        port(8081);
 
         // Konfiguracja CORS
         after((req, res) -> {
@@ -31,6 +31,6 @@ public class QueryAPI {
         MetadataController metadataController = new MetadataController();
         metadataController.registerRoutes();
 
-        System.out.println("Query Engine API is running on http://localhost:8080");
+        System.out.println("Query Engine API is running on http://localhost:8081");
     }
 }
