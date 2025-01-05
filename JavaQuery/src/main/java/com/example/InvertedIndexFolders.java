@@ -23,6 +23,7 @@ import java.util.Map;
 
 
 public class InvertedIndexFolders {
+    //not used
     private final Map<String, Map<Integer, Integer>> index = new ConcurrentHashMap<>();
     private final int executors = 20;
 

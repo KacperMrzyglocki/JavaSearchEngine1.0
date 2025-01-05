@@ -10,7 +10,7 @@ import static spark.Spark.*;
 
 public class DictionaryController {
 
-    private static final String DICTIONARY_FOLDER = "JavaQuery/assets/dictionary";
+    private static final String DICTIONARY_FOLDER = "/app/assets/dictionary";
 
     public void registerRoutes() {
         Gson gson = new Gson();

@@ -12,13 +12,13 @@ import static spark.Spark.*;
 
 public class NormalController {
 
-    private static final String INDEX_FILE_PATH = "JavaQuery/assets/inverted_index.json";
+    private static final String INDEX_FILE_PATH = "/app/assets/inverted_index.json";
 
     public void registerRoutes() {
         Gson gson = new Gson();
 
         get("/hello", (req, res) -> {
-            return "Hello world";
+            return "Hello world1";
         });
 
         // Endpoint GET /search/normal/:word

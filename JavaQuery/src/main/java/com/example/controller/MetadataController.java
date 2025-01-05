@@ -12,7 +12,7 @@ import static spark.Spark.*;
 
 public class MetadataController {
 
-    private static final String METADATA_FILE = "JavaQuery/assets/books.json";
+    private static final String METADATA_FILE = "/app/assets/books.json";
 
     public void registerRoutes() {
         Gson gson = new Gson();
