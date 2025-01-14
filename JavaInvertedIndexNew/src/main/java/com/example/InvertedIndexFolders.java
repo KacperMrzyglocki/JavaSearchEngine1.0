@@ -21,10 +21,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 public class InvertedIndexFolders {
     private final Map<String, Map<Integer, Integer>> index = new ConcurrentHashMap<>();
     private final int executors = 20;
+    private static final Logger logger = Logger.getLogger(InvertedIndexFolders.class.getName());
 
     private static final Set<String> stopwords = new HashSet<>(Arrays.asList(
             "a", "an", "the", "and", "or", "not", "is", "of", "in", "on", "to", "by" // basic stopwords
@@ -71,15 +75,15 @@ public class InvertedIndexFolders {
 
                     executorService.shutdown();
 
-                    System.out.println("Index built successfully.");
+                    logger.info("Index built successfully.");
                 } catch (IOException | InterruptedException | ExecutionException e) {
-                    System.out.println("Error reading file: " + e.getMessage());
+                    logger.info("Error reading file: " + e.getMessage());
                 }
             }
 
             private String getTextUrl(JSONObject book) {
         // Print the book JSON object for debugging
-        //System.out.println("Book JSON: " + book.toString());
+        //logger.info("Book JSON: " + book.toString());
 
         // Check if the "url" key exists directly in the book object
         if (book.has("url")) {
@@ -87,7 +91,7 @@ public class InvertedIndexFolders {
             return book.getString("url");
         } else {
             // Log an error message if no URL is found
-            System.out.println("No URL found for book ID: " + book.getInt("id")); // Debug output
+            logger.info("No URL found for book ID: " + book.getInt("id")); // Debug output
         }
 
         return null; // Return null if no URL is found
@@ -104,10 +108,10 @@ public class InvertedIndexFolders {
 
             if (responseCode == HttpURLConnection.HTTP_MOVED_TEMP || responseCode == HttpURLConnection.HTTP_MOVED_PERM) {
             String newUrl = conn.getHeaderField("Location");
-            //System.out.println("Redirected to: " + newUrl);
+            //logger.info("Redirected to: " + newUrl);
             return fetchTextFromUrl(newUrl);  // Recursively fetch from the new URL
             } else if (responseCode != HttpURLConnection.HTTP_OK) {
-            System.out.println("Error fetching URL: " + urlString + ", Response code: " + responseCode);
+            logger.info("Error fetching URL: " + urlString + ", Response code: " + responseCode);
             return null;
             }
 
@@ -120,18 +124,19 @@ public class InvertedIndexFolders {
             reader.close();
             return text.toString();
         } catch (IOException e) {
-            System.out.println("Error fetching text from URL: " + e.getMessage());
+            logger.info("Error fetching text from URL: " + e.getMessage());
             return null;
         }
     }
             public void serialize() {
+            logger.info("Serializing index...");
             File directory = new File("app/dictionary");
 
             if (directory.exists())
                 deleteDirectory(directory);
 
             if (!directory.mkdirs())
-                System.out.println("Failed to create 'dictionary' directory.");
+                logger.info("Failed to create 'dictionary' directory.");
 
             ExecutorService executorService = Executors.newFixedThreadPool(executors); // Use fixed thread pool for better performance
 
@@ -146,12 +151,13 @@ public class InvertedIndexFolders {
             try {
                 executorService.invokeAll(tasks); // Invoke all tasks concurrently
             } catch (InterruptedException e) {
-                System.out.println("Serialization interrupted: " + e.getMessage());
+                logger.info("Serialization interrupted: " + e.getMessage());
             } finally {
                 executorService.shutdown();
             }
 
-            System.out.println("Serialization completed successfully.");
+            logger.info("Serialization completed successfully. Index saved to ." +
+                    directory.getAbsolutePath());
         }
 
 
@@ -165,13 +171,22 @@ public class InvertedIndexFolders {
 
             File file = new File(fileName);
 
-            try {
-                Files.createDirectories(file.getParentFile().toPath());
-                if (!file.exists()) {
-                    Files.createFile(file.toPath());
+            boolean fileCreated = false;
+            while (!fileCreated) {
+                try {
+                    Files.createDirectories(file.getParentFile().toPath());
+                    if (!file.exists()) {
+                        Files.createFile(file.toPath());
+                    }
+                    fileCreated = true;
+                } catch (IOException e) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        logger.info("Thread interrupted: " + ie.getMessage());
+                    }
                 }
-            } catch (IOException e) {
-                System.out.println("Error creating file: " + e.getMessage());
             }
 
             JSONObject mainJson = new JSONObject();
@@ -182,7 +197,7 @@ public class InvertedIndexFolders {
                 writer.write(mainJson.toString());
                 writer.newLine();
             } catch (IOException e) {
-                System.out.println("Error writing to index: " + e.getMessage());
+                logger.info("Error writing to index: " + e.getMessage());
             }
         }
 
@@ -193,9 +208,7 @@ public class InvertedIndexFolders {
             String currentKey = null;
             boolean isInsideObject = false;
 
-            // Wczytywanie pliku linia po linii
             while ((line = reader.readLine()) != null) {
-                // Usuwamy białe znaki na początku i końcu wiersza
                 line = line.trim();
 
                 if (line.contains("}}")) {
@@ -213,17 +226,14 @@ public class InvertedIndexFolders {
                             }
                         }
                     }
-                    // Resetowanie zmiennych do przetwarzania kolejnego obiektu
                     currentJson.setLength(0);
                     currentKey = null;
                     isInsideObject = false;
                 } else if (line.contains("{")) {
-                    // Początek obiektu, ustawiamy flagę
                     isInsideObject = true;
                     currentJson.append(line);
                     currentKey = line.trim().split(":")[0].replaceAll("[^a-zA-Z0-9]", "");
                 } else if (isInsideObject) {
-                    // Dodajemy kolejne linie do bieżącego obiektu
                     currentJson.append(line);
                 }
             }
@@ -247,6 +257,6 @@ public class InvertedIndexFolders {
             }
             }
         }
-        return dir.delete(); // Usuń pusty folder
+        return dir.delete();
     }
 }

@@ -2,8 +2,6 @@ package com.example;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.hazelcast.map.IMap;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -12,36 +10,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IExecutorService;
 
 public class Crawler {
     private static final Logger logger = Logger.getLogger(Crawler.class.getName());
 
-    public static class FetchTask implements Runnable, Serializable {
-        private static final long serialVersionUID = 1L;
-        private final String query;
-        private final String author;
-        private final String title;
-        private final String language;
-        private final String outputFile;
-        private static final HazelcastInstance hazelcastInstance
-                = HazelcastConfig.getHazelcastInstance();
+           public static void fetchBooks(String query, String author, String title, String language, String outputFile) {
 
-        public FetchTask(String query, String author, String title, String language, String outputFile) {
-            this.query = query;
-            this.author = author;
-            this.title = title;
-            this.language = language;
-            this.outputFile = outputFile;
-        }
-
-        @Override
-        public void run() {
             String baseUrl = "https://gutendex.com/books";
             Map<String, String> params = new HashMap<>();
 
@@ -118,28 +99,23 @@ public class Crawler {
                         filteredBooks.put(bookInfo);
                     }
 
-                    try (FileWriter file = new FileWriter(outputFile)) {
-                        file.write(filteredBooks.toString(4));
-                        logger.info("Books saved to " + outputFile);
-                    }
-                    catch (IOException e) {
+                    String outputFilePath = outputFile.startsWith("/") ? outputFile.substring(1) : outputFile;
+                    try {
+                        Path path = Paths.get(outputFilePath);
+                        Files.createDirectories(path.getParent());
+                        Files.createFile(path);
+                        
+                        try (FileWriter fileWriter = new FileWriter(outputFilePath)) {
+                            fileWriter.write(filteredBooks.toString());
+                            Path absolutePath = path.toAbsolutePath();
+                            logger.info("Books saved to " + absolutePath);
+                        }
+                    } catch (IOException e) {
                         logger.info("Error writing to file: " + e.getMessage());
                     }
                 }
             } catch (IOException e) {
                 logger.info("Error: " + e.getMessage());
             }
-        }
     }
-
-    public static void fetchBooks(String query, String author, String title, String language, String outputFile) {
-        HazelcastInstance hazelcastInstance = HazelcastConfig.getHazelcastInstance();
-        IExecutorService executorService = hazelcastInstance.getExecutorService("default");
-         logger.info("Submitting fetch task to Hazelcast executor service");
-
-
-        FetchTask fetchTask = new FetchTask(query, author, title, language, outputFile);
-        executorService.submit(fetchTask);
-    }
-
 }

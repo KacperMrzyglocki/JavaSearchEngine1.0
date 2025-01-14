@@ -1,0 +1,226 @@
+[
+    {
+        "languages": "zh",
+        "id": 25558,
+        "title": "呻吟語",
+        "url": "https://www.gutenberg.org/ebooks/25558.txt.utf-8",
+        "authors": "Lü, Kun"
+    },
+    {
+        "languages": "en",
+        "id": 84,
+        "title": "Frankenstein; Or, The Modern Prometheus",
+        "url": "https://www.gutenberg.org/ebooks/84.txt.utf-8",
+        "authors": "Shelley, Mary Wollstonecraft"
+    },
+    {
+        "languages": "en",
+        "id": 46,
+        "title": "A Christmas Carol in Prose; Being a Ghost Story of Christmas",
+        "url": "https://www.gutenberg.org/ebooks/46.txt.utf-8",
+        "authors": "Dickens, Charles"
+    },
+    {
+        "languages": "zh",
+        "id": 24162,
+        "title": "二刻拍案惊奇",
+        "url": "https://www.gutenberg.org/ebooks/24162.txt.utf-8",
+        "authors": "Ling, Mengchu"
+    },
+    {
+        "languages": "en",
+        "id": 2701,
+        "title": "Moby Dick; Or, The Whale",
+        "url": "https://www.gutenberg.org/ebooks/2701.txt.utf-8",
+        "authors": "Melville, Herman"
+    },
+    {
+        "languages": "zh",
+        "id": 27104,
+        "title": "歸蓮夢",
+        "url": "https://www.gutenberg.org/ebooks/27104.txt.utf-8",
+        "authors": "Su'anzhuren, active 18th century"
+    },
+    {
+        "languages": "en",
+        "id": 1513,
+        "title": "Romeo and Juliet",
+        "url": "https://www.gutenberg.org/ebooks/1513.txt.utf-8",
+        "authors": "Shakespeare, William"
+    },
+    {
+        "languages": "en",
+        "id": 100,
+        "title": "The Complete Works of William Shakespeare",
+        "url": "https://www.gutenberg.org/ebooks/100.txt.utf-8",
+        "authors": "Shakespeare, William"
+    },
+    {
+        "languages": "en",
+        "id": 145,
+        "title": "Middlemarch",
+        "url": "https://www.gutenberg.org/ebooks/145.txt.utf-8",
+        "authors": "Eliot, George"
+    },
+    {
+        "languages": "en",
+        "id": 2641,
+        "title": "A Room with a View",
+        "url": "https://www.gutenberg.org/ebooks/2641.txt.utf-8",
+        "authors": "Forster, E. M. (Edward Morgan)"
+    },
+    {
+        "languages": "en",
+        "id": 37106,
+        "title": "Little Women; Or, Meg, Jo, Beth, and Amy",
+        "url": "https://www.gutenberg.org/ebooks/37106.txt.utf-8",
+        "authors": "Alcott, Louisa May"
+    },
+    {
+        "languages": "en",
+        "id": 11,
+        "title": "Alice's Adventures in Wonderland",
+        "url": "https://www.gutenberg.org/ebooks/11.txt.utf-8",
+        "authors": "Carroll, Lewis"
+    },
+    {
+        "languages": "en",
+        "id": 16389,
+        "title": "The Enchanted April",
+        "url": "https://www.gutenberg.org/ebooks/16389.txt.utf-8",
+        "authors": "Von Arnim, Elizabeth"
+    },
+    {
+        "languages": "en",
+        "id": 67979,
+        "title": "The Blue Castle: a novel",
+        "url": "https://www.gutenberg.org/ebooks/67979.txt.utf-8",
+        "authors": "Montgomery, L. M. (Lucy Maud)"
+    },
+    {
+        "languages": "en",
+        "id": 6761,
+        "title": "The Adventures of Ferdinand Count Fathom \u2014 Complete",
+        "url": "https://www.gutenberg.org/ebooks/6761.txt.utf-8",
+        "authors": "Smollett, T. (Tobias)"
+    },
+    {
+        "languages": "en",
+        "id": 394,
+        "title": "Cranford",
+        "url": "https://www.gutenberg.org/ebooks/394.txt.utf-8",
+        "authors": "Gaskell, Elizabeth Cleghorn"
+    },
+    {
+        "languages": "en",
+        "id": 2160,
+        "title": "The Expedition of Humphry Clinker",
+        "url": "https://www.gutenberg.org/ebooks/2160.txt.utf-8",
+        "authors": "Smollett, T. (Tobias)"
+    },
+    {
+        "languages": "en",
+        "id": 1342,
+        "title": "Pride and Prejudice",
+        "url": "https://www.gutenberg.org/ebooks/1342.txt.utf-8",
+        "authors": "Austen, Jane"
+    },
+    {
+        "languages": "en",
+        "id": 6593,
+        "title": "History of Tom Jones, a Foundling",
+        "url": "https://www.gutenberg.org/ebooks/6593.txt.utf-8",
+        "authors": "Fielding, Henry"
+    },
+    {
+        "languages": "en",
+        "id": 4085,
+        "title": "The Adventures of Roderick Random",
+        "url": "https://www.gutenberg.org/ebooks/4085.txt.utf-8",
+        "authors": "Smollett, T. (Tobias)"
+    },
+    {
+        "languages": "en",
+        "id": 1259,
+        "title": "Twenty years after",
+        "url": "https://www.gutenberg.org/ebooks/1259.txt.utf-8",
+        "authors": "Dumas, Alexandre, Maquet, Auguste"
+    },
+    {
+        "languages": "en",
+        "id": 5197,
+        "title": "My Life \u2014 Volume 1",
+        "url": "https://www.gutenberg.org/ebooks/5197.txt.utf-8",
+        "authors": "Wagner, Richard"
+    },
+    {
+        "languages": "en",
+        "id": 64317,
+        "title": "The Great Gatsby",
+        "url": "https://www.gutenberg.org/ebooks/64317.txt.utf-8",
+        "authors": "Fitzgerald, F. Scott (Francis Scott)"
+    },
+    {
+        "languages": "en",
+        "id": 174,
+        "title": "The Picture of Dorian Gray",
+        "url": "https://www.gutenberg.org/ebooks/174.txt.utf-8",
+        "authors": "Wilde, Oscar"
+    },
+    {
+        "languages": "en",
+        "id": 25344,
+        "title": "The Scarlet Letter",
+        "url": "https://www.gutenberg.org/ebooks/25344.txt.utf-8",
+        "authors": "Hawthorne, Nathaniel"
+    },
+    {
+        "languages": "en",
+        "id": 43,
+        "title": "The Strange Case of Dr. Jekyll and Mr. Hyde",
+        "url": "https://www.gutenberg.org/ebooks/43.txt.utf-8",
+        "authors": "Stevenson, Robert Louis"
+    },
+    {
+        "languages": "en",
+        "id": 2554,
+        "title": "Crime and Punishment",
+        "url": "https://www.gutenberg.org/ebooks/2554.txt.utf-8",
+        "authors": "Dostoyevsky, Fyodor"
+    },
+    {
+        "languages": "en",
+        "id": 98,
+        "title": "A Tale of Two Cities",
+        "url": "https://www.gutenberg.org/ebooks/98.txt.utf-8",
+        "authors": "Dickens, Charles"
+    },
+    {
+        "languages": "en",
+        "id": 2542,
+        "title": "A Doll's House : a play",
+        "url": "https://www.gutenberg.org/ebooks/2542.txt.utf-8",
+        "authors": "Ibsen, Henrik"
+    },
+    {
+        "languages": "en",
+        "id": 345,
+        "title": "Dracula",
+        "url": "https://www.gutenberg.org/ebooks/345.txt.utf-8",
+        "authors": "Stoker, Bram"
+    },
+    {
+        "languages": "en",
+        "id": 76,
+        "title": "Adventures of Huckleberry Finn",
+        "url": "https://www.gutenberg.org/ebooks/76.txt.utf-8",
+        "authors": "Twain, Mark"
+    },
+    {
+        "languages": "en",
+        "id": 844,
+        "title": "The Importance of Being Earnest: A Trivial Comedy for Serious People",
+        "url": "https://www.gutenberg.org/ebooks/844.txt.utf-8",
+        "authors": "Wilde, Oscar"
+    }
+]

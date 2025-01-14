@@ -42,7 +42,6 @@ public class MainMenu {
                     language = language.isEmpty() ? "en" : language;
                     
                      Crawler.fetchBooks(query, language, null, null, "/app/books.json");
-                    System.out.print("Done");
                     break;
                 default:
                     exit = true;
