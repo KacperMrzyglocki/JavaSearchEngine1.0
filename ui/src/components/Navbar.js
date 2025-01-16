@@ -38,6 +38,14 @@ const Navbar = ({ activeTab, setActiveTab }) => {
                     >
                         Metadata
                     </button>
+                    <button
+                        className={`px-4 py-2 rounded text-white ${
+                            activeTab === 'stats' ? 'bg-blue-700' : 'hover:bg-blue-700'
+                        }`}
+                        onClick={() => setActiveTab('stats')}
+                    >
+                        Stats
+                    </button>
                 </div>
             </div>
         </nav>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import SearchQuery from './components/SearchQuery';
 import MetadataSearch from './components/MetadataSearch';
+import Stats from "./components/Stats";
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('normal');
@@ -14,6 +15,8 @@ const App = () => {
               <SearchQuery tab={activeTab} />
           ) : activeTab === 'metadata' ? (
               <MetadataSearch />
+          ) : activeTab === 'stats' ? (
+              <Stats />
           ) : null}
         </div>
       </div>

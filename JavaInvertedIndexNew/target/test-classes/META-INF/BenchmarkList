@@ -1,0 +1,2 @@
+JMH S 25 com.example.BenchmarkTest S 62 com.example.jmh_generated.BenchmarkTest_testBuildIndex_jmhTest S 14 testBuildIndex S 11 AverageTime E A 1 1 1 E E E E E E E E E E E E E E U 12 MILLISECONDS E E 
+JMH S 25 com.example.BenchmarkTest S 65 com.example.jmh_generated.BenchmarkTest_testSerialization_jmhTest S 17 testSerialization S 11 AverageTime E A 1 1 1 E E E E E E E E E E E E E E U 12 MILLISECONDS E E 

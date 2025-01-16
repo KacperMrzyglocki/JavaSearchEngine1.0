@@ -1,1 +1,9 @@
-com\example\BenchmarkTest.class
+META-INF/CompilerHints
+com/example/jmh_generated/BenchmarkTest_jmhType_B2.class
+com/example/jmh_generated/BenchmarkTest_testBuildIndex_jmhTest.class
+com/example/jmh_generated/BenchmarkTest_jmhType_B3.class
+com/example/jmh_generated/BenchmarkTest_jmhType.class
+META-INF/BenchmarkList
+com/example/jmh_generated/BenchmarkTest_jmhType_B1.class
+com/example/jmh_generated/BenchmarkTest_testSerialization_jmhTest.class
+com/example/BenchmarkTest.class

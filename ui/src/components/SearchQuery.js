@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import BookDetailsModal from "./BookDetailsModal";
+import {baseURL} from "../globals";
 
 const SearchQuery = ({ tab }) => {
     const [queryMode, setQueryMode] = useState('normal'); // 'normal', 'and', 'or'
@@ -18,11 +19,11 @@ const SearchQuery = ({ tab }) => {
         let url = '';
 
         if (queryMode === 'normal') {
-            url = `http://localhost:8080/search/${tab}/${query}`;
+            url = `${baseURL}/search/${tab}/${query}`;
         } else if (queryMode === 'and') {
-            url = `http://localhost:8080/search/${tab}/and/${encodeURIComponent(query1)}/${encodeURIComponent(query2)}`;
+            url = `${baseURL}/search/${tab}/and/${encodeURIComponent(query1)}/${encodeURIComponent(query2)}`;
         } else if (queryMode === 'or') {
-            url = `http://localhost:8080/search/${tab}/or/${encodeURIComponent(query1)}/${encodeURIComponent(query2)}`;
+            url = `${baseURL}/search/${tab}/or/${encodeURIComponent(query1)}/${encodeURIComponent(query2)}`;
         }
         console.log(url)
 
@@ -37,7 +38,7 @@ const SearchQuery = ({ tab }) => {
 
     const handleShowModal = async (book)=>{
         try {
-            const response = await axios.get(`http://localhost:8080/search/metadata/${book}`);
+            const response = await axios.get(`${baseURL}/search/metadata/${book}`);
             setBookDetails(response.data);
             setShowModal(true);
         } catch (error) {

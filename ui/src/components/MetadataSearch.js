@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import {baseURL} from "../globals";
 
 const MetadataSearch = () => {
     const [searchType, setSearchType] = useState('id');
@@ -12,13 +13,13 @@ const MetadataSearch = () => {
         let url = '';
 
         if (searchType === 'id') {
-            url = `http://localhost:8080/search/metadata/${query}`;
+            url = `${baseURL}/search/metadata/${query}`;
         } else if (searchType === 'author') {
-            url = `http://localhost:8080/search/metadata/author/${query}`;
+            url = `${baseURL}/search/metadata/author/${query}`;
         } else if (searchType === 'language') {
-            url = `http://localhost:8080/search/metadata/language/${query}`;
+            url = `${baseURL}/search/metadata/language/${query}`;
         } else if (searchType === 'title') {
-            url = `http://localhost:8080/search/metadata/title/${query}`;
+            url = `${baseURL}/search/metadata/title/${query}`;
         }
 
         try {
