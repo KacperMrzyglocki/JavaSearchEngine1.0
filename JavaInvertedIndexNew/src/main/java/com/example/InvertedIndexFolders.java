@@ -45,7 +45,6 @@ public class InvertedIndexFolders {
             }
         }
     }
-
             public void buildIndex(String inputFile) {
                 ExecutorService executorService = Executors.newFixedThreadPool(executors);
 

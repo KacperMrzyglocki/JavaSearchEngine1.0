@@ -1,77 +1,73 @@
 package com.example.controller;
 
-import com.example.HazelcastClientConnection;
+import com.hazelcast.client.HazelcastClient;
+import com.hazelcast.client.config.ClientConfig;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.map.IMap;
 import com.google.gson.Gson;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static spark.Spark.*;
 
-import java.util.*;
-
 public class HazelcastController {
 
-    private final HazelcastClientConnection hazelcastClient;
-    private final Gson gson;
+    private final HazelcastInstance hazelcastClient;
+    private final IMap<String, Map<Integer, Integer>> invertedIndex;
 
-    public HazelcastController(HazelcastClientConnection hazelcastClient) {
-        this.hazelcastClient = hazelcastClient;
-        this.gson = new Gson();
+    public HazelcastController() {
+        // Configure Hazelcast client
+        ClientConfig clientConfig = new ClientConfig();
+        clientConfig.getNetworkConfig().addAddress("192.168.1.44", "192.168.1.194");
+
+        this.hazelcastClient = HazelcastClient.newHazelcastClient(clientConfig);
+        this.invertedIndex = hazelcastClient.getMap("invertedIndex");
     }
 
     public void registerRoutes() {
-        // Endpoint GET /search/hazelcast/:word
-        get("/search/hazelcast/:word", (req, res) -> {
-            String word = req.params(":word");
-            Map<Integer, Integer> result = hazelcastClient.searchWord(word);  // Wyszukiwanie w istniejącym klastrze
-            res.type("application/json");
+        Gson gson = new Gson();
 
-            if (result == null) {
-                return gson.toJson(Collections.emptyMap());  // Zwrócenie pustej mapy jeśli nie znaleziono słowa
-            }
+        // Endpoint GET /documents/:words
+        // Example: /documents/word1+word2+word3
+        get("/documents/:words", (req, res) -> {
+            String wordsParam = req.params(":words");
+            List<String> words = Arrays.asList(wordsParam.split("\\+")); // Split by '+'
 
-            return gson.toJson(result);  // Zwrócenie wyników wyszukiwania w formacie JSON
-        });
-
-        // Endpoint GET /search/hazelcast/or/:word1/:word2
-        get("/search/hazelcast/or/:word1/:word2", (req, res) -> {
-            String word1 = req.params(":word1");
-            String word2 = req.params(":word2");
-            Map<Integer, Integer> resultWord1 = hazelcastClient.searchWord(word1);
-            Map<Integer, Integer> resultWord2 = hazelcastClient.searchWord(word2);
-
-            // Łączenie wyników bez duplikatów (łączy mapy wyników)
-            Map<Integer, Integer> combinedResult = new HashMap<>();
-            if (resultWord1 != null) {
-                combinedResult.putAll(resultWord1);
-            }
-            if (resultWord2 != null) {
-                resultWord2.forEach((docId, count) ->
-                        combinedResult.merge(docId, count, Integer::sum)
-                );
-            }
+            // Search documents containing the words
+            Map<Integer, Integer> results = searchDocuments(words);
 
             res.type("application/json");
-            return gson.toJson(combinedResult);  // Zwraca połączone wyniki
+            return gson.toJson(results);
         });
+    }
 
-        // Endpoint GET /search/hazelcast/and/:word1/:word2
-        get("/search/hazelcast/and/:word1/:word2", (req, res) -> {
-            String word1 = req.params(":word1");
-            String word2 = req.params(":word2");
-            Map<Integer, Integer> resultWord1 = hazelcastClient.searchWord(word1);
-            Map<Integer, Integer> resultWord2 = hazelcastClient.searchWord(word2);
+    /**
+     * Searches for documents containing any of the given words in the inverted index.
+     *
+     * @param words List of words to search for.
+     * @return A map of document IDs and their combined word counts.
+     */
+    private Map<Integer, Integer> searchDocuments(List<String> words) {
+        Map<Integer, Integer> resultMap = new HashMap<>();
 
-            // Znajdowanie przecięcia wyników
-            Map<Integer, Integer> intersectionResult = new HashMap<>();
-            if (resultWord1 != null && resultWord2 != null) {
-                resultWord1.forEach((docId, count1) -> {
-                    if (resultWord2.containsKey(docId)) {
-                        intersectionResult.put(docId, Math.min(count1, resultWord2.get(docId)));
-                    }
-                });
+        for (String word : words) {
+            Map<Integer, Integer> wordResults = invertedIndex.get(word.toLowerCase());
+            if (wordResults != null) {
+                for (Map.Entry<Integer, Integer> entry : wordResults.entrySet()) {
+                    resultMap.merge(entry.getKey(), entry.getValue(), Integer::sum);
+                }
             }
+        }
 
-            res.type("application/json");
-            return gson.toJson(intersectionResult);  // Zwraca przecięcie wyników
-        });
+        return resultMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())) // Sort by word count descending
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
     }
 }
