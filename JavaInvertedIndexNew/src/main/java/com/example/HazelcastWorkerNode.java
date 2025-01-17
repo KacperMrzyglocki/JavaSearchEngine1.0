@@ -10,8 +10,8 @@ public class HazelcastWorkerNode {
         NetworkConfig networkConfig = config.getNetworkConfig();
 
         networkConfig.getJoin().getTcpIpConfig()
-                .addMember("192.168.1.44") // Adres głównego węzła
-                .addMember("192.168.1.194") // Adres tego węzła
+                .addMember("192.168.1.44") // Address of the main node
+                .addMember("192.168.1.194") // Address of this node
                 .setEnabled(true);
         networkConfig.getJoin().getMulticastConfig().setEnabled(false);
 

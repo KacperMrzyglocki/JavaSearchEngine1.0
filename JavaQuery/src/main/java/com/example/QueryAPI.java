@@ -8,14 +8,14 @@ public class QueryAPI {
     public static void main(String[] args) {
         port(8081);
 
-        // Konfiguracja CORS
+        // CORS
         after((req, res) -> {
             res.header("Access-Control-Allow-Origin", "*");
             res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
             res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
         });
 
-        // Rejestracja endpointów w kontrolerach
+        // Endpoints
         DictionaryController dictionaryController = new DictionaryController();
         dictionaryController.registerRoutes();
 

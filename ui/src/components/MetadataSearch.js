@@ -45,7 +45,6 @@ const MetadataSearch = () => {
                     <option value="title">Search by Title</option>
                 </select>
 
-                {/* Dynamiczne pole wejściowe */}
                 {searchType === 'language' ? (
                     <select
                         value={query}

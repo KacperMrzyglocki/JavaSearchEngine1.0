@@ -30,35 +30,35 @@ public class HazelcastIndexerNode {
         // Hazelcast Configuration
         Config config = new Config();
 
-        // Ustawienia sieciowe Hazelcast
+        // Hazelcast network settings
         NetworkConfig networkConfig = config.getNetworkConfig();
-        networkConfig.setPublicAddress("192.168.1.44:5701"); // Publiczny adres IP węzła
+        networkConfig.setPublicAddress("192.168.1.44:5701"); // Public IP address of the node
 
         networkConfig.getInterfaces()
                 .setEnabled(true)
-                .addInterface("192.168.1.*"); // Dostosuj do swojej sieci lokalnej
+                .addInterface("192.168.1.*"); // Adjust to your local network
 
         networkConfig.getJoin().getTcpIpConfig()
-                .addMember("192.168.1.44") // Adres głównego węzła
-                .addMember("192.168.1.194") // Adres drugiego węzła
+                .addMember("192.168.1.44") // Main node address
+                .addMember("192.168.1.194") // Second node address
                 .setEnabled(true);
 
         networkConfig.getJoin().getMulticastConfig().setEnabled(false);
 
-        // Dodatkowe właściwości dla Dockera
+        // Additional properties for Docker
         System.setProperty("hazelcast.local.localAddress", "192.168.1.44");
 
-        // Tworzenie instancji Hazelcast
+        // Creating Hazelcast instance
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(config);
         IMap<String, Map<Integer, Integer>> invertedIndex = hazelcastInstance.getMap("invertedIndex");
 
-        // Ścieżka do pliku wejściowego
-        String inputFile = "/app/assets/books.json"; // Plik wejściowy JSON
+        // Path to the input file
+        String inputFile = "/app/assets/books.json"; // Input JSON file
 
-        // Budowanie indeksu
+        // Building the index
         buildIndex(inputFile, invertedIndex);
 
-        // Informacja o zakończeniu
+        // Information about the completion
         System.out.println("Indexing completed. Index is stored in Hazelcast cluster.");
     }
 
@@ -118,18 +118,18 @@ public class HazelcastIndexerNode {
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
-            conn.setInstanceFollowRedirects(false);  // Ważne: ustawiamy na false, aby ręcznie obsłużyć przekierowanie
+            conn.setInstanceFollowRedirects(false);  // Important: set to false to handle redirects manually
             conn.connect();
 
             int responseCode = conn.getResponseCode();
 
             if (responseCode == HttpURLConnection.HTTP_MOVED_TEMP || responseCode == HttpURLConnection.HTTP_MOVED_PERM) {
-                // Obsługa przekierowania
+                // Handle redirect
                 String newUrl = conn.getHeaderField("Location");
-                System.out.println("Redirected to: " + newUrl);  // Debugging: pokazanie nowego URL
-                return fetchTextFromUrl(newUrl);  // Rekursywnie pobierz tekst z nowego URL
+                System.out.println("Redirected to: " + newUrl);  // Debugging: showing the new URL
+                return fetchTextFromUrl(newUrl);  // Recursively fetch text from the new URL
             } else if (responseCode == HttpURLConnection.HTTP_OK) {
-                // Jeśli kod odpowiedzi to 200, pobieramy tekst
+                // If response code is 200, fetch the text
                 BufferedReader reader = new BufferedReader(new java.io.InputStreamReader(conn.getInputStream()));
                 StringBuilder text = new StringBuilder();
                 String line;

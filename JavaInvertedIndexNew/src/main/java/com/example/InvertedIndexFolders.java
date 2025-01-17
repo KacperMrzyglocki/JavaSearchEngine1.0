@@ -213,9 +213,7 @@ public class InvertedIndexFolders {
                 if (line.contains("}}")) {
                     currentJson.append(line);
                     if (currentKey != null) {
-                        // Zamiast dodawać String, tworzysz obiekt JSONObject
                         JSONObject wordJson = new JSONObject(currentJson.toString());
-                        // Zaktualizuj index
                         for (String word : wordJson.keySet()) {
                             JSONObject wordData = wordJson.getJSONObject(word);
                             for (String docIdStr : wordData.keySet()) {

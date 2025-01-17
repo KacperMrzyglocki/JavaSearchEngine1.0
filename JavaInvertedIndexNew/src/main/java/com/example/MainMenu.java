@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class MainMenu {
     private static final Scanner scanner = new Scanner(System.in);
-    private static final InvertedIndexFolders index = new InvertedIndexFolders(); // Lokalny indeks
+    private static final InvertedIndexFolders index = new InvertedIndexFolders();
 
     public static void main(String[] args) {
         boolean exit = false;
