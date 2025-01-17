@@ -1,6 +1,5 @@
 com/example/controller/NormalController.class
 com/example/controller/DictionaryController.class
-com/example/InvertedIndexFolders.class
 com/example/controller/MetadataController.class
 com/example/controller/HazelcastController.class
 com/example/QueryAPI.class

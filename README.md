@@ -92,8 +92,10 @@ Test na dwoch komputerach w tej samej sieci, konfiguracja:
 UI:
 
 W folderze ui:
-npm install
-npm start
+
+docker build -t my-react-app .
+docker run -p 3000:3000 -v $(pwd):/app my-react-app
+
 wlaczyc http://localhost:3000/
 
 Do testowania czasu:
