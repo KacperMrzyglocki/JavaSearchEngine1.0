@@ -4,28 +4,26 @@ import java.util.Scanner;
 
 public class MainMenu {
     private static final Scanner scanner = new Scanner(System.in);
-    private static final InvertedIndexFolders index = new InvertedIndexFolders();
-
-
+    private static final InvertedIndexFolders index = new InvertedIndexFolders(); // Lokalny indeks
 
     public static void main(String[] args) {
         boolean exit = false;
 
         while (!exit) {
-            System.out.println("1. Index books");
+            System.out.println("===== Main Menu =====");
+            System.out.println("1. Index books locally");
             System.out.print("?> ");
             int choice = scanner.nextInt();
             scanner.nextLine();
 
             switch (choice) {
                 case 1:
-                    index.buildIndex("/app/books.json");
+                    index.buildIndex("/app/assets/books.json");
                     index.serialize();
-                    System.out.println("Index built.");
+                    System.out.println("Local indexing completed.");
                     break;
-
                 default:
-                    System.out.println("Invalid option. Try again.");
+                    System.out.println("Invalid option. Please try again.");
             }
         }
     }

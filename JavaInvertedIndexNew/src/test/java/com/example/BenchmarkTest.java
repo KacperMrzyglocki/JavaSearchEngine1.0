@@ -7,15 +7,25 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
 public class BenchmarkTest {
-    private final InvertedIndex index = new InvertedIndex();
+    private final InvertedIndexFolders index = new InvertedIndexFolders();
 
-    @Benchmark
-    public void testFetchBooks() {
-        crawler.fetchBooks("adventure", "en", "books.json");
+    @Setup(Level.Trial)
+    public void setup() {
+        // Setup code here, if needed
+    }
+
+    @TearDown(Level.Trial)
+    public void tearDown() {
+        // Teardown code here, if needed
     }
 
     @Benchmark
     public void testBuildIndex() {
         index.buildIndex("books.json");
+    }
+
+    @Benchmark
+    public void testSerialization() {
+        index.serialize();
     }
 }

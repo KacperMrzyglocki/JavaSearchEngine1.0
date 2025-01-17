@@ -26,7 +26,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.example.MainMenu</mainClass>
+                  <mainClass>com.example.HazelcastIndexerNode</mainClass>
                 </transformer>
               </transformers>
             </configuration>

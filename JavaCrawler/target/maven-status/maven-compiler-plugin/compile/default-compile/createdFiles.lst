@@ -1,1 +1,4 @@
 com\example\Crawler.class
+com\example\MainMenu.class
+com\example\Crawler$FetchTask.class
+com\example\HazelcastConfig.class

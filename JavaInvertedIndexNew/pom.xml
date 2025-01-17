@@ -39,6 +39,13 @@
       <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- Hazelcast Client Dependency -->
+        <dependency>
+        <groupId>com.hazelcast</groupId>
+        <artifactId>hazelcast-all</artifactId>
+        <version>4.2.8</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -68,7 +75,7 @@
             <configuration>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>com.example.MainMenu</mainClass>
+                  <mainClass>com.example.HazelcastIndexerNode</mainClass>
                 </transformer>
               </transformers>
             </configuration>
